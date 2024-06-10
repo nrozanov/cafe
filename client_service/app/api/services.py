@@ -1,6 +1,7 @@
 import asyncio
-import os
 import httpx
+import os
+from typing import Type
 
 from app.api.schema import ReadyOrder
 
@@ -11,32 +12,32 @@ CHECK_FOR_READY_INTERVAL = 1
 class OrdersQueue:
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls: Type["OrdersQueue"]) -> "OrdersQueue":
         if not cls._instance:
             cls._instance = super(OrdersQueue, cls).__new__(cls)
         return cls._instance
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls: Type["OrdersQueue"]) -> "OrdersQueue":
         if not cls._instance:
             raise ValueError("OrdersQueue is not initialized")
         return cls._instance
 
     @classmethod
-    def reset_instance(cls):
+    def reset_instance(cls: Type["OrdersQueue"]) -> None:
         cls._instance = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.new_orders = set()
         self.ready_orders = set()
         self.next_id = 0
 
-    def add(self):
+    def add(self) -> int:
         self.next_id += 1
         self.new_orders.add(self.next_id)
         return self.next_id
 
-    async def get_prepared_order(self, order_id: int) -> int:
+    async def get_prepared_order(self, order_id: int) -> ReadyOrder:
         check_interval = (
             os.environ.get("CHECK_FOR_READY_INTERVAL") or CHECK_FOR_READY_INTERVAL
         )
@@ -46,7 +47,7 @@ class OrdersQueue:
                 return ReadyOrder(id=order_id)
             await asyncio.sleep(int(check_interval))
 
-    async def sync_orders(self):
+    async def sync_orders(self) -> None:
         url = os.environ.get("WORKER_SERVICE_HOST_URL") or WORKER_SERVICE_HOST_URL
         async with httpx.AsyncClient() as client:
             payload = [{"id": order_id} for order_id in self.new_orders]

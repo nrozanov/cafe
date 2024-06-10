@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     scheduler = AsyncIOScheduler()
     sync_interval = os.environ.get("SYNC_INTERVAL") or SYNC_INTERVAL
     scheduler.add_job(
-        func=orders_queue.sync_orders, trigger="interval", seconds=sync_interval
+        func=orders_queue.sync_orders, trigger="interval", seconds=int(sync_interval)
     )
     scheduler.start()
     yield

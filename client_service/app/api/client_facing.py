@@ -4,12 +4,6 @@ from app.api.schema import ReadyOrder
 from app.api.services import OrdersQueue
 
 
-# TODO:
-# Add annotations
-# Add pre-commit hooks
-# Add inline comments for classes etc
-# Clean up dependencies
-
 client_facing = APIRouter()
 
 

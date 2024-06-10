@@ -24,12 +24,12 @@ class TestOrdersQueue:
 
     def test_get_ready_orders_and_reset(self):
         self.queue.ready_orders = {1, 2}
-        assert self.queue.get_ready_orders_and_reset() == [{"id": 1}, {"id": 2}]
+        assert self.queue.get_ready_orders_and_reset() == [Order(id=1), Order(id=2)]
         assert self.queue.ready_orders == set()
 
     def test_get_new_orders(self):
         self.queue.add_new_orders([Order(id=1), Order(id=2)])
-        assert self.queue.get_new_orders() == [{"id": 1}, {"id": 2}]
+        assert self.queue.get_new_orders() == [Order(id=1), Order(id=2)]
 
     def test_move_to_in_progress(self):
         self.queue.add_new_orders([Order(id=1), Order(id=2)])
